@@ -270,7 +270,7 @@ ScanActionBtn.MouseButton1Click:Connect(function()
                 local code = "local s=Instance.new('StringValue',workspace);s.Name='Marnonet_V';s.Value='"..id.."'"
                 if r:IsA("RemoteEvent") then r:FireServer(code) else task.spawn(function() r:InvokeServer(code) end) end
             end)
-            if i % 40 == 0 then RunService.Heartbeat:Wait() end
+            if i % 30 == 0 then RunService.Heartbeat:Wait() end
         end
     end)
 end)
