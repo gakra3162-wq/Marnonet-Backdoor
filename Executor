@@ -79,7 +79,7 @@ end
 
 --================ MAIN FRAME (EXECUTOR) ================--
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 600, 0, 350) 
+MainFrame.Size = UDim2.new(0, 700, 0, 450) -- DAHA BÜYÜK BOYUT
 MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 MainFrame.BackgroundColor3 = Colors.FrameBg
@@ -93,33 +93,33 @@ MStr.Color = Colors.Outline
 MStr.Parent = MainFrame
 
 local TitleLbl = Instance.new("TextLabel")
-TitleLbl.Size = UDim2.new(1, 0, 0, 30)
-TitleLbl.Position = UDim2.new(0, 0, 0, 0)
+TitleLbl.Size = UDim2.new(1, -40, 0, 40)
+TitleLbl.Position = UDim2.new(0, 10, 0, 0)
 TitleLbl.BackgroundTransparency = 1
 TitleLbl.Text = " Marnonet Executor"
 TitleLbl.Font = Enum.Font.GothamBold
-TitleLbl.TextSize = 16
+TitleLbl.TextScaled = true -- TEXT SCALED EKLENDİ
 TitleLbl.TextColor3 = Colors.Text
 TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
 TitleLbl.Parent = MainFrame
 
 local MinimizeBtn = Instance.new("TextButton")
-MinimizeBtn.Size = UDim2.new(0, 30, 0, 30)
-MinimizeBtn.Position = UDim2.new(1, -30, 0, 0)
+MinimizeBtn.Size = UDim2.new(0, 40, 0, 40)
+MinimizeBtn.Position = UDim2.new(1, -40, 0, 0)
 MinimizeBtn.BackgroundTransparency = 1
 MinimizeBtn.Text = "-"
 MinimizeBtn.Font = MAIN_FONT
 MinimizeBtn.TextColor3 = Colors.Text
-MinimizeBtn.TextSize = 30
+MinimizeBtn.TextScaled = true -- TEXT SCALED EKLENDİ
 MinimizeBtn.Parent = MainFrame
 
 local FloatingBtn = Instance.new("TextButton")
-FloatingBtn.Size = UDim2.new(0, 50, 0, 50)
-FloatingBtn.Position = UDim2.new(1, -60, 1, -60)
+FloatingBtn.Size = UDim2.new(0, 60, 0, 60)
+FloatingBtn.Position = UDim2.new(1, -70, 1, -70)
 FloatingBtn.BackgroundColor3 = Colors.FrameBg
 FloatingBtn.Text = "M"
 FloatingBtn.Font = Enum.Font.GothamBold
-FloatingBtn.TextSize = 24
+FloatingBtn.TextScaled = true -- TEXT SCALED EKLENDİ
 FloatingBtn.TextColor3 = Colors.Text
 FloatingBtn.Visible = false
 FloatingBtn.Parent = ScreenGui
@@ -132,7 +132,7 @@ MinimizeBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false; Floa
 FloatingBtn.MouseButton1Click:Connect(function() MainFrame.Visible = true; FloatingBtn.Visible = false end)
 
 local CodeBoxBg = Instance.new("Frame", MainFrame)
-CodeBoxBg.Size = UDim2.new(0.96, 0, 0.7, 0)
+CodeBoxBg.Size = UDim2.new(0.96, 0, 0.75, 0)
 CodeBoxBg.Position = UDim2.new(0.02, 0, 0.1, 0)
 CodeBoxBg.BackgroundColor3 = Colors.InnerBg
 CodeBoxBg.BorderSizePixel = 1
@@ -143,23 +143,23 @@ CodeBox.Size = UDim2.new(1, -10, 1, -10)
 CodeBox.Position = UDim2.new(0, 5, 0, 5)
 CodeBox.BackgroundTransparency = 1
 CodeBox.Font = MAIN_FONT
-CodeBox.TextSize = 14
+CodeBox.TextScaled = true -- TEXT SCALED EKLENDİ
 CodeBox.ClearTextOnFocus = false
 CodeBox.MultiLine = true
-CodeBox.Text = '-- Marnonet Backdoor\n-- Kodunu buraya yaz'
+CodeBox.Text = '-- Execute Marnonet Tough' -- YENİ YAZI
 CodeBox.TextColor3 = Colors.Text
 CodeBox.TextXAlignment = 0
 CodeBox.TextYAlignment = 0
 CodeBox.Parent = CodeBoxBg
 
 local BottomBar = Instance.new("Frame", MainFrame)
-BottomBar.Size = UDim2.new(0.96, 0, 0, 40)
-BottomBar.Position = UDim2.new(0.02, 0, 0.85, 0)
+BottomBar.Size = UDim2.new(0.96, 0, 0, 50)
+BottomBar.Position = UDim2.new(0.02, 0, 0.87, 0)
 BottomBar.BackgroundTransparency = 1
 
 local BottomList = Instance.new("UIListLayout", BottomBar)
 BottomList.FillDirection = Enum.FillDirection.Horizontal
-BottomList.Padding = UDim.new(0, 10)
+BottomList.Padding = UDim.new(0, 15)
 BottomList.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 local function createMainBtn(text, size, parent)
@@ -167,7 +167,7 @@ local function createMainBtn(text, size, parent)
     btn.Text = text
     btn.Size = size
     btn.Font = MAIN_FONT
-    btn.TextSize = 16
+    btn.TextScaled = true -- TEXT SCALED EKLENDİ
     btn.BackgroundColor3 = Colors.BtnBg
     btn.BorderSizePixel = 0
     btn.TextColor3 = Colors.Text
@@ -182,15 +182,15 @@ local function createMainBtn(text, size, parent)
     return btn
 end
 
-local ClearBtn = createMainBtn("CLEAR", UDim2.new(0, 180, 1, 0), BottomBar)
-local FillBtn = createMainBtn("AUTO FILL", UDim2.new(0, 180, 1, 0), BottomBar)
-local ExecBtn = createMainBtn("EXECUTE", UDim2.new(0, 180, 1, 0), BottomBar)
+local ClearBtn = createMainBtn("CLEAR", UDim2.new(0, 210, 1, 0), BottomBar)
+local FillBtn = createMainBtn("AUTO FILL", UDim2.new(0, 210, 1, 0), BottomBar)
+local ExecBtn = createMainBtn("EXECUTE", UDim2.new(0, 210, 1, 0), BottomBar)
 
 local TargetRemote = nil
 
 --================ SCANNER PANEL ================--
 local ScanPanel = Instance.new("Frame")
-ScanPanel.Size = UDim2.new(0, 350, 0, 180)
+ScanPanel.Size = UDim2.new(0, 450, 0, 250) -- DAHA BÜYÜK BOYUT
 ScanPanel.AnchorPoint = Vector2.new(0.5, 0.5)
 ScanPanel.Position = UDim2.new(0.5, 0, 0.5, 0)
 ScanPanel.BackgroundColor3 = Colors.FrameBg
@@ -203,27 +203,17 @@ SStr.Color = Colors.Outline
 SStr.Parent = ScanPanel
 
 local ScanTitle = Instance.new("TextLabel")
-ScanTitle.Size = UDim2.new(1, 0, 0, 40)
+ScanTitle.Size = UDim2.new(1, 0, 0, 60)
 ScanTitle.BackgroundTransparency = 1
-ScanTitle.Position = UDim2.new(0,0,0,5)
+ScanTitle.Position = UDim2.new(0,0,0,10)
 ScanTitle.Text = "Marnonet Scanner"
 ScanTitle.TextColor3 = Colors.Text
 ScanTitle.Font = MAIN_FONT
 ScanTitle.TextScaled = true
 ScanTitle.Parent = ScanPanel
 
-local ScanActionBtn = createMainBtn("Scan For Backdoor", UDim2.new(0.8, 0, 0.35, 0), ScanPanel)
-ScanActionBtn.Position = UDim2.new(0.1, 0, 0.3, 0)
-
-local StatusLbl = Instance.new("TextLabel")
-StatusLbl.Size = UDim2.new(1, 0, 0, 40)
-StatusLbl.Position = UDim2.new(0, 0, 0.7, 0)
-StatusLbl.BackgroundTransparency = 1
-StatusLbl.Text = "SYSTEM IDLE"
-StatusLbl.TextColor3 = Colors.Text
-StatusLbl.Font = MAIN_FONT
-StatusLbl.TextScaled = true
-StatusLbl.Parent = ScanPanel
+local ScanActionBtn = createMainBtn("Scan For Backdoor", UDim2.new(0.8, 0, 0.4, 0), ScanPanel)
+ScanActionBtn.Position = UDim2.new(0.1, 0, 0.4, 0)
 
 local IsScanning = false
 local RemoteMap = {}
@@ -236,7 +226,8 @@ game.Workspace.ChildAdded:Connect(function(c)
         c:Destroy()
         if TargetRemote then
             IsScanning = false
-            StatusLbl.Text = "Found In 0." .. tostring(math.random(10, 99)) .. "s"
+            ScanActionBtn.Text = "Scan For Backdoor"
+            local foundMsg = "Found In 0." .. tostring(math.random(10, 99)) .. "s"
             pcall(function() 
                 if TargetRemote:IsA("RemoteEvent") then 
                     TargetRemote:FireServer(HintCode) 
@@ -244,7 +235,7 @@ game.Workspace.ChildAdded:Connect(function(c)
                     task.spawn(function() TargetRemote:InvokeServer(HintCode) end) 
                 end 
             end)
-            sendNotify("Marnonet", StatusLbl.Text)
+            sendNotify("Marnonet", foundMsg)
             task.wait(0.5)
             MainFrame.Visible = true
             ScanPanel.Visible = false
@@ -256,7 +247,7 @@ ScanActionBtn.MouseButton1Click:Connect(function()
     if IsScanning then return end
     IsScanning = true
     TargetRemote = nil
-    StatusLbl.Text = "SCANNING..."
+    ScanActionBtn.Text = "SCANNING..."
     RemoteMap = {}
     local remotes = {}
     local susServices = {game.ReplicatedStorage, game.JointsService, game.Lighting, game.SoundService, game.Workspace}
